@@ -4,6 +4,8 @@ use Mojo::Base -base;
 use Mojo::Template;
 use Mojo::Util 'trim';
 
+our $VERSION = '0.01';
+
 my @key_types = qw{
 ecdsa-sha2-nistp256
 ecdsa-sha2-nistp384
