@@ -219,6 +219,8 @@ key-db - a file based ssh public key database
 
 =for html <a href="https://travis-ci.org/kiwiroy/ssh-key-db"><img src="https://travis-ci.org/kiwiroy/ssh-key-db.svg?branch=master"></a>
 
+=for html <a href='https://coveralls.io/github/kiwiroy/ssh-key-db?branch=master'><img src='https://coveralls.io/repos/github/kiwiroy/ssh-key-db/badge.svg?branch=master' alt='Coverage Status' /></a>
+
 =head1 DESCRIPTION
 
 =head1 SYNOPSIS
