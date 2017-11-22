@@ -1,0 +1,230 @@
+#!/usr/bin/env perl
+
+# DEVELOPERS: read maint/build.sh
+# __FATPACK__
+
+package 
+    keydb;
+
+use Applify;
+use Mojo::Base -base;
+use Mojo::ByteStream;
+use Mojo::Collection 'c';
+use Mojo::File;
+use Mojo::Asset::Memory;
+use Mojo::Loader qw{data_section};
+use Mojo::Template;
+use SSH::PublicKey;
+
+extends 'Mojo::Base';
+
+documentation __FILE__;
+
+sub key_files { shift->key_dir->list()->grep(qr/\.authorized_keys$/); }
+
+option dir  => key_dir => 'where to find *.authorized_keys files', default => '.', isa => 'Mojo::File';
+
+# create
+subcommand add => 'add a public key' => sub {
+    option file => public_key => 'path to public key file', required => 1, isa => 'Mojo::File';
+    option str  => username   => 'user name - generates file name', required => 1;
+    option file => command    => 'path to command', required => 1, isa => 'Mojo::File';
+    option str  => allowed    => 'commands allowed', n_of => '@', required => 1;
+    option str  => reason     => q{raison d'etre - used for comments}, required => 1;
+    option flag => unique     => 'check public key is unique', default => 1;
+};
+
+sub command_add {
+    my ($self) = @_;
+
+    my $key = SSH::PublicKey->new(val => $self->public_key->slurp)
+	->command(sprintf '%s %s', $self->command, join ' ', @{$self->allowed})
+	->comment(sprintf 'passphraseless key `%s`', $self->reason)
+	->no_pty(1)->no_port_forwarding(1)->no_X11_forwarding(1)
+	->no_agent_forwarding(1);
+    my $file_content = $key->render();
+
+    if ($self->unique) {
+	my $matches = $self->_fetch_by_public_key($key);
+	my $file = $self->public_key;
+	$matches->each(sub { say STDERR "$file matches $_"; });
+	return 1 if $matches->size > 0;
+    }
+
+    my $output = $self->key_dir
+	->child($self->_generate_filename)
+	->spurt($file_content);
+    say "added: $output";
+    return 0;
+}
+
+# read
+subcommand list => 'list files based on a predicate' => sub {
+    option file => public_key => 'path to public key file', isa => 'Mojo::File';
+    option str  => username   => q{read all of a user's keys};
+};
+
+sub command_list {
+    my $self = shift;
+    my $results = c();
+    if ($self->public_key) {
+	my $query = SSH::PublicKey->new(val => $self->public_key->slurp);	
+	push @$results, $self->_fetch_by_public_key($query)->each;	
+    }
+    if (my $user = $self->username) {
+	push @$results, $self->_fetch_by_user($user)->each;	
+    }
+    if (0 == @$results and not $self->username and not $self->public_key) {
+	push @$results, $self->key_files->each;
+    }
+    $results->uniq(sub { $_->to_string })->each(
+	sub {
+	    my $key = SSH::PublicKey->new(val => $_->slurp);
+	    my ($user, $reason) = split(/\./, $_->basename);
+	    say "filename: $_"; say "user: $user"; say "reason: $reason";
+	    say "command: ", $key->command; say "key: ", $key->key;
+	    say "type: ", $key->type;
+	    say "*" x 80;
+	});
+    return 0;
+}
+
+# update
+subcommand update => 'update a record' => sub {
+    option file => public_key => 'path to public key file', required => 1, isa => 'Mojo::File';
+    option str  => allowed    => 'commands allowed', n_of => '@';
+    option file => command    => 'path to command', isa => 'Mojo::File';
+    option str  => reason     => q{raison d'etre - used for comments}, required => 1;
+    option str  => username   => q{change ownership};    
+};
+
+# update table set column = value where public_key = ?
+sub command_update {
+    my $self = shift;
+    
+    my $cmd = $self->command;
+    my @allowed = @{$self->allowed};
+
+    if (!$cmd and !@allowed) {
+	say STDERR "supply either -allowed or -command or both";
+	return 1;
+    }
+
+    my $query = SSH::PublicKey->new(val => $self->public_key->slurp);
+    $self->_fetch_by_public_key($query, 0)
+	->map(sub { 
+	    my ($user) = $self->_filename_divide($_);
+	    $self->username($user) unless $self->username;
+	    my $moved = $_->move_to($_->dirname->child($self->_generate_filename));
+	    say "renamed: $_ to $moved" if "$_" ne "$moved";
+	    [ $moved, SSH::PublicKey->new(val => $moved->slurp) ]
+	      })
+	->each(
+	sub {
+	    my ($e, $n) = (shift, shift);
+	    my ($file, $key) = @$e;
+	    $cmd ||= $key->command;
+	    if (not defined $cmd) {
+		say STDERR 'no command to update';
+		return ;
+	    }
+
+	    say "updating: $file";
+	    my @cmd = split(/\s/, $cmd, 2);
+	    $cmd[1] = "@allowed" if @allowed;
+	    $key->command("@cmd")
+		->comment(sprintf 'passphraseless key `%s`', $self->reason)
+		->no_pty(1)->no_port_forwarding(1)->no_X11_forwarding(1)
+		->no_agent_forwarding(1);
+	    $file->spurt($key->render);
+	});
+    return 0;
+}
+
+# delete
+subcommand delete => 'delete files based on a predicate' => sub {
+    option file => 'public_key' => 'path to public key file', isa => 'Mojo::File';
+    option str  => 'username'   => q{remove all of a user's keys};
+};
+
+sub command_delete {
+    my $self = shift;
+    my $results = c();
+    if ($self->public_key) {
+	my $query = SSH::PublicKey->new(val => $self->public_key->slurp);
+	push @$results, $self->_fetch_by_public_key($query, 0)->each;
+    }
+    if (my $user = $self->username) {
+	push @$results, $self->_fetch_by_user($user)->each;
+    }
+    $results->uniq->each(
+	sub {
+	    say "deleting: $_";
+	    1 == unlink $_ or say STDERR "did not delete '$_': $!";
+	});
+    return 0;
+}
+
+sub _fetch_by_public_key {
+    my ($self, $query, $debug) = @_;
+    return $self->key_files
+	->grep(
+	sub { 
+	    my $key = SSH::PublicKey->new(val => $_->slurp);
+	    if ($debug) {
+		warn "testing $_\n";
+		warn "query key: ", $query->key, "\n";
+		warn "file key : ", $key->key, "\n";
+		warn "match: ", ($key->key eq $query->key ? 1 : 0), "\n";
+	    }
+	    return $key->key eq $query->key;
+	});
+}
+
+sub _fetch_by_user {
+    my ($self, $user) = @_;
+    return $self->key_files
+	->grep(sub { $_->basename =~ qr/^$user\./ })
+}
+
+sub _filename_divide {
+    my ($self, $mfile) = @_;
+    return (split /\./, $mfile->basename)[0,1];
+}
+
+sub _generate_filename {
+    my ($self) = @_;
+    (my $reason   = $self->reason)   =~ s/\./_/g;
+    (my $username = $self->username) =~ s/\./_/g;
+    return sprintf '%s.%s.authorized_keys', $username, $reason;
+}
+
+app {
+    my $self = shift;
+
+    my $keys = $self->key_files->map(
+	sub {
+	    SSH::PublicKey->new(val => $_->slurp);
+	})->uniq(sub { $_->key });
+
+    return 0;
+};
+
+
+=pod
+
+=head1 NAME
+
+key-db - a file based ssh public key database
+
+=head1 DESCRIPTION
+
+=head1 SYNOPSIS
+
+=head1 SEE ALSO
+
+This is nothing like
+
+* man sshd_config AuthorizedKeysCommand
+
+=cut
