@@ -217,6 +217,8 @@ app {
 
 key-db - a file based ssh public key database
 
+=for html <a href="https://travis-ci.org/kiwiroy/ssh-key-db"><img src="https://travis-ci.org/kiwiroy/ssh-key-db.svg?branch=master"></a>
+
 =head1 DESCRIPTION
 
 =head1 SYNOPSIS
