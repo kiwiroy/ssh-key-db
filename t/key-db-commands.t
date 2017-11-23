@@ -15,9 +15,14 @@ $t->help_ok
     ->can_ok('key_files')
     ->can_ok(qw{command_add command_list command_update command_delete});
 
-is_deeply $t->app_instance(qw{-key-dir ./t/data})->key_files,
+my $app = $t->app_instance(qw{-key-dir ./t/data});
+
+is_deeply $app->key_files,
     [ qw{t/data/user1.shutdown.authorized_keys t/data/user2.ps.authorized_keys} ], 
     'test data files';
+
+is_deeply [ $app->_filename_divide(Mojo::File->new('t/data/user2.ps.authorized_keys')) ],
+    [ qw{user2 ps} ], 'divide function';
 
 $t = new_ok('Test::Applify', ['./scripts/key-db', 'add']);
 $t->help_ok
@@ -61,6 +66,11 @@ $t->help_ok
     ->is_option('public_key')
     ->is_option('username');
 
+$t = new_ok('Test::Applify', ['./scripts/key-db', 'install']);
+$t->help_ok
+    ->documentation_ok
+    ->is_option('key_dir')
+    ->is_required_option('authorized_keys');
 
 
 done_testing();

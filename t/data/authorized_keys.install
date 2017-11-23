@@ -1,0 +1,3 @@
+ssh-rsa AAAAAEEAEEEAEAEEAEAEEEEA= remain
+command="/bin/true",no-port-forwarding,no-X11-forwarding,no-agent-forwarding ssh-rsa AAAAAAEEEE= passphraseless key `test-suite`
+command="/bin/true",no-port-forwarding,no-X11-forwarding,no-agent-forwarding ssh-rsa AAAAAA= passphraseless key `test-suite`
