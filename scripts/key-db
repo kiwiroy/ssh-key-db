@@ -66,11 +66,11 @@ sub command_list {
     my $self = shift;
     my $results = c();
     if ($self->public_key) {
-	my $query = SSH::PublicKey->new(val => $self->public_key->slurp);	
-	push @$results, $self->_fetch_by_public_key($query)->each;	
+	my $query = SSH::PublicKey->new(val => $self->public_key->slurp);
+	push @$results, $self->_fetch_by_public_key($query)->each;
     }
     if (my $user = $self->username) {
-	push @$results, $self->_fetch_by_user($user)->each;	
+	push @$results, $self->_fetch_by_user($user)->each;
     }
     if (0 == @$results and not $self->username and not $self->public_key) {
 	push @$results, $self->key_files->each;
@@ -93,13 +93,13 @@ subcommand update => 'update a record' => sub {
     option str  => allowed    => 'commands allowed', n_of => '@';
     option file => command    => 'path to command', isa => 'Mojo::File';
     option str  => reason     => q{raison d'etre - used for comments}, required => 1;
-    option str  => username   => q{change ownership};    
+    option str  => username   => q{change ownership};
 };
 
 # update table set column = value where public_key = ?
 sub command_update {
     my ($self, $updated) = (shift);
-    
+
     my $cmd = $self->command;
     my @allowed = @{$self->allowed};
 
@@ -180,7 +180,7 @@ sub command_install {
 	say STDERR "file does not exist ", $self->authorized_keys;
 	return 1;
     };
-    
+
     my $keys = c(split /\r?\n/, $self->authorized_keys->slurp)
 	->grep(qr/^\S+/)
 	->map(
@@ -193,21 +193,21 @@ sub command_install {
 	    $orig_no_command++ if $_->command;
 	    $_->command ? 0 : 1
 	});
-    
+
     push @$keys, $self->key_files->map(
-	sub { 
+	sub {
 	    $database++;
 	    SSH::PublicKey->new(val => $_->slurp);
 	})->each;
 
     my $mem = Mojo::Asset::Memory->new();
     $keys->each(
-	sub { 
+	sub {
 	    $installed++;
 	    $mem->add_chunk($_->render)
 	});
     $mem->move_to($self->authorized_keys);
-    
+
     my $retval = 0;
     say "wrote: ", $self->authorized_keys;
     say "installed: $installed, original: $original ($orig_no_command), database: $database";
@@ -223,7 +223,7 @@ sub _fetch_by_public_key {
     my ($self, $query, $debug) = @_;
     return $self->key_files
 	->grep(
-	sub { 
+	sub {
 	    my $key = SSH::PublicKey->new(val => $_->slurp);
 	    if ($debug) {
 		warn "testing $_\n";
