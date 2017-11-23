@@ -36,22 +36,22 @@ sub command_add {
     my ($self) = @_;
 
     my $key = SSH::PublicKey->new(val => $self->public_key->slurp)
-	->command(sprintf '%s %s', $self->command, join ' ', @{$self->allowed})
-	->comment(sprintf 'passphraseless key `%s`', $self->reason)
-	->no_pty(1)->no_port_forwarding(1)->no_X11_forwarding(1)
-	->no_agent_forwarding(1);
+        ->command(sprintf '%s %s', $self->command, join ' ', @{$self->allowed})
+        ->comment(sprintf 'passphraseless key `%s`', $self->reason)
+        ->no_pty(1)->no_port_forwarding(1)->no_X11_forwarding(1)
+        ->no_agent_forwarding(1);
     my $file_content = $key->render();
 
     if ($self->unique) {
-	my $matches = $self->_fetch_by_public_key($key);
-	my $file = $self->public_key;
-	$matches->each(sub { say STDERR "$file matches $_"; });
-	return 1 if $matches->size > 0;
+        my $matches = $self->_fetch_by_public_key($key);
+        my $file = $self->public_key;
+        $matches->each(sub { say STDERR "$file matches $_"; });
+        return 1 if $matches->size > 0;
     }
 
     my $output = $self->key_dir
-	->child($self->_generate_filename)
-	->spurt($file_content);
+        ->child($self->_generate_filename)
+        ->spurt($file_content);
     say "added: $output";
     return 0;
 }
@@ -66,24 +66,24 @@ sub command_list {
     my $self = shift;
     my $results = c();
     if ($self->public_key) {
-	my $query = SSH::PublicKey->new(val => $self->public_key->slurp);
-	push @$results, $self->_fetch_by_public_key($query)->each;
+        my $query = SSH::PublicKey->new(val => $self->public_key->slurp);
+        push @$results, $self->_fetch_by_public_key($query)->each;
     }
     if (my $user = $self->username) {
-	push @$results, $self->_fetch_by_user($user)->each;
+        push @$results, $self->_fetch_by_user($user)->each;
     }
     if (0 == @$results and not $self->username and not $self->public_key) {
-	push @$results, $self->key_files->each;
+        push @$results, $self->key_files->each;
     }
     $results->uniq(sub { $_->to_string })->each(
-	sub {
-	    my $key = SSH::PublicKey->new(val => $_->slurp);
-	    my ($user, $reason) = split(/\./, $_->basename);
-	    say "filename: $_"; say "user: $user"; say "reason: $reason";
-	    say "command: ", $key->command; say "key: ", $key->key;
-	    say "type: ", $key->type;
-	    say "*" x 80;
-	});
+        sub {
+            my $key = SSH::PublicKey->new(val => $_->slurp);
+            my ($user, $reason) = split(/\./, $_->basename);
+            say "filename: $_"; say "user: $user"; say "reason: $reason";
+            say "command: ", $key->command; say "key: ", $key->key;
+            say "type: ", $key->type;
+            say "*" x 80;
+        });
     return 0;
 }
 
@@ -110,34 +110,34 @@ sub command_update {
 
     my $query = SSH::PublicKey->new(val => $self->public_key->slurp);
     $self->_fetch_by_public_key($query, 0)
-	->map(
-	sub {
-	    my ($user) = $self->_filename_divide($_);
+        ->map(
+        sub {
+            my ($user) = $self->_filename_divide($_);
 	    $self->username($user) unless $self->username;
-	    my $moved = $_->move_to($_->dirname->child($self->_generate_filename));
-	    say "renamed: $_ to $moved" if "$_" ne "$moved";
-	    [ $moved, SSH::PublicKey->new(val => $moved->slurp) ]
-	})
-	->each(
-	sub {
-	    my ($e, $n) = (shift, shift);
-	    my ($file, $key) = @$e;
-	    $cmd ||= $key->command;
-	    if (0 == length($cmd)) {
-		say STDERR "no command to update $file";
-		return;
-	    }
+            my $moved = $_->move_to($_->dirname->child($self->_generate_filename));
+            say "renamed: $_ to $moved" if "$_" ne "$moved";
+            [ $moved, SSH::PublicKey->new(val => $moved->slurp) ]
+        })
+        ->each(
+        sub {
+            my ($e, $n) = (shift, shift);
+            my ($file, $key) = @$e;
+            $cmd ||= $key->command;
+            if (0 == length($cmd)) {
+                say STDERR "no command to update $file";
+                return;
+            }
 
-	    say "updating: $file";
-	    my @cmd = split(/\s/, $cmd, 2);
-	    $cmd[1] = "@allowed" if @allowed;
-	    $key->command("@cmd")
-		->comment(sprintf 'passphraseless key `%s`', $self->reason)
-		->no_pty(1)->no_port_forwarding(1)->no_X11_forwarding(1)
-		->no_agent_forwarding(1);
-	    $file->spurt($key->render);
-	    $updated++;
-	});
+            say "updating: $file";
+            my @cmd = split(/\s/, $cmd, 2);
+            $cmd[1] = "@allowed" if @allowed;
+            $key->command("@cmd")
+                ->comment(sprintf 'passphraseless key `%s`', $self->reason)
+                ->no_pty(1)->no_port_forwarding(1)->no_X11_forwarding(1)
+                ->no_agent_forwarding(1);
+            $file->spurt($key->render);
+            $updated++;
+        });
 
     return $updated ? 0 : 2;
 }
@@ -152,17 +152,17 @@ sub command_delete {
     my $self = shift;
     my $results = c();
     if ($self->public_key) {
-	my $query = SSH::PublicKey->new(val => $self->public_key->slurp);
-	push @$results, $self->_fetch_by_public_key($query, 0)->each;
+        my $query = SSH::PublicKey->new(val => $self->public_key->slurp);
+        push @$results, $self->_fetch_by_public_key($query, 0)->each;
     }
     if (my $user = $self->username) {
-	push @$results, $self->_fetch_by_user($user)->each;
+        push @$results, $self->_fetch_by_user($user)->each;
     }
     $results->uniq->each(
-	sub {
-	    say "deleting: $_";
-	    1 == unlink $_ or say STDERR "did not delete '$_': $!";
-	});
+        sub {
+            say "deleting: $_";
+            1 == unlink $_ or say STDERR "did not delete '$_': $!";
+        });
     return 0;
 }
 
@@ -177,35 +177,35 @@ sub command_install {
     my ($self, $installed, $original, $orig_no_command, $database) = (shift, 0, 0, 0, 0);
 
     -e $self->authorized_keys and -r _ or do {
-	say STDERR "file does not exist ", $self->authorized_keys;
-	return 1;
+        say STDERR "file does not exist ", $self->authorized_keys;
+        return 1;
     };
 
     my $keys = c(split /\r?\n/, $self->authorized_keys->slurp)
-	->grep(qr/^\S+/)
-	->map(
-	sub {
-	    $original++;
+        ->grep(qr/^\S+/)
+        ->map(
+        sub {
+            $original++;
 	    SSH::PublicKey->new(val => $_);
-	})
-	->grep(
-	sub {
-	    $orig_no_command++ if $_->command;
-	    $_->command ? 0 : 1
+        })
+        ->grep(
+        sub {
+            $orig_no_command++ if $_->command;
+            $_->command ? 0 : 1;
 	});
 
     push @$keys, $self->key_files->map(
-	sub {
-	    $database++;
-	    SSH::PublicKey->new(val => $_->slurp);
-	})->each;
+        sub {
+            $database++;
+            SSH::PublicKey->new(val => $_->slurp);
+        })->each;
 
     my $mem = Mojo::Asset::Memory->new();
     $keys->each(
-	sub {
-	    $installed++;
-	    $mem->add_chunk($_->render)
-	});
+        sub {
+            $installed++;
+            $mem->add_chunk($_->render)
+        });
     $mem->move_to($self->authorized_keys);
 
     my $retval = 0;
@@ -222,17 +222,17 @@ sub command_install {
 sub _fetch_by_public_key {
     my ($self, $query, $debug) = @_;
     return $self->key_files
-	->grep(
-	sub {
-	    my $key = SSH::PublicKey->new(val => $_->slurp);
-	    if ($debug) {
-		warn "testing $_\n";
-		warn "query key: ", $query->key, "\n";
-		warn "file key : ", $key->key, "\n";
-		warn "match: ", ($key->key eq $query->key ? 1 : 0), "\n";
-	    }
-	    return $key->key eq $query->key;
-	});
+        ->grep(
+        sub {
+            my $key = SSH::PublicKey->new(val => $_->slurp);
+            if ($debug) {
+                warn "testing $_\n";
+                warn "query key: ", $query->key, "\n";
+                warn "file key : ", $key->key, "\n";
+                warn "match: ", ($key->key eq $query->key ? 1 : 0), "\n";
+            }
+            return $key->key eq $query->key;
+        });
 }
 
 sub _fetch_by_user {
