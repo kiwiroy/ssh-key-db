@@ -272,6 +272,8 @@ key-db - a file based ssh public key database
 
 =for html <a href='https://coveralls.io/github/kiwiroy/ssh-key-db?branch=master'><img src='https://coveralls.io/repos/github/kiwiroy/ssh-key-db/badge.svg?branch=master' alt='Coverage Status' /></a>
 
+=for html <a href="https://kritika.io/users/kiwiroy/repos/5759845703012386/heads/master/"><img src="https://kritika.io/users/kiwiroy/repos/5759845703012386/heads/master/status.svg" alt="Kritika Analysis Status" /></a>
+
 =head1 DESCRIPTION
 
 =head1 SYNOPSIS
