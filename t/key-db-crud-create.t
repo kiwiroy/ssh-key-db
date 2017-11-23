@@ -1,7 +1,7 @@
 ## -*- mode: perl; -*-
 
-package 
-    test;
+package
+    KeyDBCRUDCreate;
 
 use strict;
 use warnings;
@@ -20,10 +20,10 @@ $t = new_ok('Test::Applify', ['./scripts/key-db', 'add']);
 my $db = create_empty_db(Mojo::File->new($0)->basename);
 
 #
-# add one 
+# add one
 #
 $app = $t->app_instance(qw{
--public-key ./t/data/user1.shutdown.authorized_keys 
+-public-key ./t/data/user1.shutdown.authorized_keys
 -command /bin/true
 -username foo
 -reason test-suite
@@ -43,20 +43,20 @@ $t->run_instance_ok($app);
 is $app->key_files->size, 1, 'one file';
 $app->key_files->each(
     sub {
-	my $name = $_->basename;
-	is +($name =~ tr/\./\./), 2, 'no extraneous periods in filenames';
-	my ($user, $reason) = split /\./, $name;
-	is $user, 'foo', 'correct';
-	is $reason, 'test-suite', 'correct again';
-	my $k = SSH::PublicKey->new(val => $_->slurp);
-	is $k->command, '/bin/true ps ls', 'command set';
+        my $name = $_->basename;
+        is +($name =~ tr/\./\./), 2, 'no extraneous periods in filenames';
+        my ($user, $reason) = split /\./, $name;
+        is $user, 'foo', 'correct';
+        is $reason, 'test-suite', 'correct again';
+        my $k = SSH::PublicKey->new(val => $_->slurp);
+        is $k->command, '/bin/true ps ls', 'command set';
     });
 
 #
 # add another, same name/reason, so same file.
 #
 $app = $t->app_instance(qw{
--public-key ./t/data/user1.shutdown.authorized_keys 
+-public-key ./t/data/user1.shutdown.authorized_keys
 -command /bin/true
 -username foo
 -reason test-suite
@@ -79,7 +79,7 @@ is $app->key_files->size, 1, 'one file';
 # add another, unique hopefully
 #
 $app = $t->app_instance(qw{
--public-key ./t/data/user2.ps.authorized_keys 
+-public-key ./t/data/user2.ps.authorized_keys
 -command /bin/only
 -allowed df
 -username bar
@@ -122,8 +122,8 @@ $t->run_instance_ok($app);
 is $app->key_files->size, 3, 'three files';
 $app->key_files->each(
     sub {
-	my $name = $_->basename;
-	is +($name =~ tr/\./\./), 2, 'no extraneous periods in filenames';
+        my $name = $_->basename;
+        is +($name =~ tr/\./\./), 2, 'no extraneous periods in filenames';
     });
 
 #
@@ -132,10 +132,10 @@ $app->key_files->each(
 
 $app->key_files->map(
     sub {
-	# __PACKAGE__ needs a package definition above
-	my $exp = data_section(__PACKAGE__, $_->basename);
-	my $obs = $_->slurp;
-	is $obs, $exp, 'content match ' . $_->basename;
+        # __PACKAGE__ needs a package definition above
+        my $exp = data_section(__PACKAGE__, $_->basename);
+        my $obs = $_->slurp;
+        is $obs, $exp, 'content match ' . $_->basename;
 });
 
 
