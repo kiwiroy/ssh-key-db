@@ -3,8 +3,6 @@
 # DEVELOPERS: read maint/build.sh
 # __FATPACK__
 
-package 
-    keydb;
 
 use Applify;
 use Mojo::Base -base;
@@ -176,7 +174,7 @@ subcommand install => 'install keys from key dir to authorized_keys' => sub {
 };
 
 sub command_install {
-    my ($self, $installed, $original, $orig_no_command, $database) = (shift, 0, 0);
+    my ($self, $installed, $original, $orig_no_command, $database) = (shift, 0, 0, 0, 0);
 
     -e $self->authorized_keys and -r _ or do {
 	say STDERR "file does not exist ", $self->authorized_keys;

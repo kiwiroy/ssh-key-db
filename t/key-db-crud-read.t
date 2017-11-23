@@ -1,5 +1,7 @@
 ## -*- mode: perl; -*-
 
+package
+    crudreadtest;
 use strict;
 use warnings;
 

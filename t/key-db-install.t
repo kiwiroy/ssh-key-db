@@ -1,7 +1,7 @@
 ## -*- mode: perl; -*-
 
 package 
-    test;
+    installtest;
 
 use strict;
 use warnings;

@@ -2,12 +2,18 @@ language: perl
 
 perl: ["5.22", "5.24", "5.26"]
 
+env:
+  global:
+  - KRITIKA_TOKEN=1eee176f581f15d03a87e84b8266a1ea497d6007
+
 install:
-  - "cpanm -n --quiet Devel::Cover Test::Pod Test::Pod::Coverage Devel::Cover::Report::Coveralls"
+  - "cpanm -n --quiet Devel::Cover Test::Pod Test::Pod::Coverage Devel::Cover::Report::Coveralls Devel::Cover::Report::Kritika"
   - "cpanm -n --quiet --installdeps ."
   - "cpanm https://github.com/kiwiroy/fatpack-maint-builder/releases/download/v1.1/FatPack-Maint-Build-1.1.tar.gz"
 
-after_success: "cover -test -report coveralls"
+after_success:
+  - "cover -test -report coveralls"
+  - "cover -test -report kritika"
 
 notifications:
   email: false

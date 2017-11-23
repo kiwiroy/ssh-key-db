@@ -1,5 +1,6 @@
 ## -*- mode: perl; -*-
-
+package 
+    dbcommandstest;
 use strict;
 use warnings;
 

@@ -6,6 +6,8 @@ use warnings;
 
 use base 'Exporter';
 
+use IO::String;
+
 use Mojo::File qw{tempdir};
 use Mojo::Home;
 use Mojo::Util 'monkey_patch';
@@ -56,16 +58,19 @@ monkey_patch 'Test::Applify', run_instance_ok => sub {
     $self->_test('can_ok', $instance, '_script');
 
     my ($stdout, $stderr, $exited) = ('', '', 0);
-    local (*STDOUT, *STDERR);
-    open STDOUT, '>', \$stdout;
-    open STDERR, '>', \$stderr;
+    #local (*STDOUT, *STDERR);
+    #open STDOUT, '>', \$stdout;
+    #open STDERR, '>', \$stderr;
+    tie *STDOUT, 'IO::String', \$stdout;
+    tie *STDERR, 'IO::String', \$stderr;
 
     local *CORE::GLOBAL::exit = sub (;$) { $exited = 1; };
     my $retval = eval { $instance->run() };
     # no warnings 'once' and https://stackoverflow.com/a/25376064
     *CORE::GLOBAL::exit = *CORE::exit;
 
-    Test::More::diag "\$instance->run failed, check stderr" if 1 == $exited;
+    untie *STDOUT;
+    untie *STDERR;
 
     return ($exited, $stdout || $@, $@ || $stderr, $retval);
 };

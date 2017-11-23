@@ -1,3 +1,6 @@
+## -*- mode: perl; -*-
+use strict;
+use warnings;
 use Test::More;
 use File::Find;
 
@@ -13,6 +16,9 @@ if(!eval 'use Test::Pod::Coverage; 1') {
 if(!eval 'use Test::CPAN::Changes; 1') {
   *Test::CPAN::Changes::changes_file_ok = sub { SKIP: { skip "changes_ok(@_) (Test::CPAN::Changes is required)", 4 } };
 }
+if(!eval 'use Test::Synopsis; 1') {
+  *Test::Synopsis::synopsis_ok = sub { SKIP: { skip "synopsis_ok(@_) (Test::Synopsis is required)", 2 } };
+}
 
 find(
   {
@@ -22,7 +28,7 @@ find(
   -e 'blib' ? 'blib' : 'lib',
 );
 
-plan tests => @files * 3 + 4;
+plan tests => @files * 3 + 4 + 2;
 
 for my $file (@files) {
   my $module = $file; $module =~ s,\.pm$,,; $module =~ s,.*/?lib/,,; $module =~ s,/,::,g;
@@ -32,3 +38,5 @@ for my $file (@files) {
 }
 
 Test::CPAN::Changes::changes_file_ok();
+
+Test::Synopsis::synopsis_ok(qw{scripts/key-db lib/SSH/PublicKey.pm});
