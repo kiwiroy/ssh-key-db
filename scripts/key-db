@@ -103,7 +103,7 @@ sub command_update {
     my $cmd = $self->command;
     my @allowed = @{$self->allowed};
 
-    if (!$cmd and !@allowed) {
+    if ((!$cmd) and (!@allowed)) {
 	say STDERR "supply either -allowed or -command or both";
 	return 1;
     }
@@ -238,7 +238,7 @@ sub _fetch_by_public_key {
 sub _fetch_by_user {
     my ($self, $user) = @_;
     return $self->key_files
-	->grep(sub { $_->basename =~ qr/^$user\./ })
+        ->grep(sub { $_->basename =~ qr/^$user\./ })
 }
 
 sub _filename_divide {
