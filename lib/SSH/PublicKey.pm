@@ -53,9 +53,9 @@ sub restrictions {
     my ($self, @parts) = (shift);
     push @parts, sprintf('command="%s"', $self->command) if $self->command;
     push @parts, (map { $self->$_ ? $self->_attr_to_option($_) : () }
-		  qw{no_pty no_port_forwarding no_X11_forwarding no_agent_forwarding});
+                  qw{no_pty no_port_forwarding no_X11_forwarding no_agent_forwarding});
     return join ',' => @parts;
-};
+}
 
 sub _attr_to_option {
     local $_ = $_[1] or return;
@@ -68,10 +68,10 @@ sub _parse {
     return $self unless $self->{val};
     my $RE = $self->_parse_re;
     if ($self->{val} =~ m/$RE/) {
-	$self->_restrictions($1)->type($2)->key($3)->comment($4);
-	chop($self->{_restrictions}) if $1;
+        $self->_restrictions($1)->type($2)->key($3)->comment($4);
+        chop($self->{_restrictions}) if $1;
     } else {
-	say STDERR "Failed to parse: ", $self->{val};
+        say STDERR "Failed to parse: ", $self->{val};
     }
     return $self;
 }

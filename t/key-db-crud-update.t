@@ -91,7 +91,7 @@ like $stderr, qr/^no command to update/m, 'failed update message';
 $app = $t->app_instance(@opts);
 $app->key_files->map(
     sub {
-	# __PACKAGE__ needs a package definition above
+        # __PACKAGE__ needs a package definition above
         my $exp = data_section(__PACKAGE__, $_->basename);
         my $obs = $_->slurp;
         is $obs, $exp, 'content match ' . $_->basename;
