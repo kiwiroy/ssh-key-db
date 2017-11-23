@@ -104,8 +104,8 @@ sub command_update {
     my @allowed = @{$self->allowed};
 
     if ((!$cmd) and (!@allowed)) {
-	say STDERR "supply either -allowed or -command or both";
-	return 1;
+        say STDERR "supply either -allowed or -command or both";
+        return 1;
     }
 
     my $query = SSH::PublicKey->new(val => $self->public_key->slurp);
@@ -113,7 +113,7 @@ sub command_update {
         ->map(
         sub {
             my ($user) = $self->_filename_divide($_);
-	    $self->username($user) unless $self->username;
+            $self->username($user) unless $self->username;
             my $moved = $_->move_to($_->dirname->child($self->_generate_filename));
             say "renamed: $_ to $moved" if "$_" ne "$moved";
             [ $moved, SSH::PublicKey->new(val => $moved->slurp) ]
@@ -168,8 +168,8 @@ sub command_delete {
 
 subcommand install => 'install keys from key dir to authorized_keys' => sub {
     option file => 'authorized_keys' => 'path to authorized_keys file to install into', (
-	required => 1,
-	isa => 'Mojo::File'
+        required => 1,
+        isa => 'Mojo::File'
     );
 };
 
@@ -186,13 +186,13 @@ sub command_install {
         ->map(
         sub {
             $original++;
-	    SSH::PublicKey->new(val => $_);
+            SSH::PublicKey->new(val => $_);
         })
         ->grep(
         sub {
             $orig_no_command++ if $_->command;
             $_->command ? 0 : 1;
-	});
+        });
 
     push @$keys, $self->key_files->map(
         sub {
@@ -212,8 +212,8 @@ sub command_install {
     say "wrote: ", $self->authorized_keys;
     say "installed: $installed, original: $original ($orig_no_command), database: $database";
     if (($orig_no_command + $database) != $installed) {
-	$retval = 1;
-	say STDERR "bad install count";
+        $retval = 1;
+        say STDERR "bad install count";
     }
 
     return $retval;
