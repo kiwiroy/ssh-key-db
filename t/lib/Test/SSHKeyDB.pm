@@ -26,13 +26,13 @@ sub create_db {
 
     $t = Test::More::new_ok('Test::Applify', [qw{./scripts/key-db add}]);
     $app = $t->app_instance(@opts, qw{
--public-key ./t/data/user1.shutdown.authorized_keys 
+-public-key ./t/data/user1.shutdown.authorized_keys
 -username foo
 -key-dir}, $db->to_string);
     $app->run;
 
     $app = $t->app_instance(@opts, qw{
--public-key ./t/data/user2.ps.authorized_keys 
+-public-key ./t/data/user2.ps.authorized_keys
 -username bar
 -key-dir}, $db->to_string);
     $app->run;

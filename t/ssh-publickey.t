@@ -46,7 +46,7 @@ is $key->render, qq{command="/usr/bin/only option",no-pty,no-X11-forwarding ssh-
     'restricted';
 
 is $key->no_port_forwarding(1)->no_agent_forwarding(1)->render,
-    qq{command="/usr/bin/only option",} . 
+    qq{command="/usr/bin/only option",} .
     qq{no-pty,no-port-forwarding,no-X11-forwarding,no-agent-forwarding ssh-rsa AAAAAAAAAEAEAE000=\n},
     'more restricted';
 

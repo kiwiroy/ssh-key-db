@@ -50,7 +50,7 @@ like   $stdout, qr/^user:\sfoo$/m, 'has foo user';
 # select by public key
 #
 $app = $t->app_instance(qw{
--public-key ./t/data/user1.shutdown.authorized_keys 
+-public-key ./t/data/user1.shutdown.authorized_keys
 -reason test-suite
 -key-dir}, $db->to_string);
 
@@ -67,7 +67,7 @@ like $stdout, qr/^user:\sfoo$/m, 'correct user';
 # i.e. key is for user foo, but we select on bar too.
 #
 $app = $t->app_instance(qw{
--public-key ./t/data/user1.shutdown.authorized_keys 
+-public-key ./t/data/user1.shutdown.authorized_keys
 -username bar
 -reason test-suite
 -key-dir}, $db->to_string);
@@ -86,7 +86,7 @@ like $stdout, qr/^user:\sfoo$/m, 'foo user';
 # (selects the same key, which might give 2 results, but they should be unique)
 #
 $app = $t->app_instance(qw{
--public-key ./t/data/user2.ps.authorized_keys 
+-public-key ./t/data/user2.ps.authorized_keys
 -username bar
 -reason test-suite
 -key-dir}, $db->to_string);

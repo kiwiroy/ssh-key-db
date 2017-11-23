@@ -21,7 +21,7 @@ $t->help_ok
 my $app = $t->app_instance(qw{-key-dir ./t/data});
 
 is_deeply $app->key_files,
-    [ qw{t/data/user1.shutdown.authorized_keys t/data/user2.ps.authorized_keys} ], 
+    [ qw{t/data/user1.shutdown.authorized_keys t/data/user2.ps.authorized_keys} ],
     'test data files';
 
 is_deeply [ $app->_filename_divide(Mojo::File->new('t/data/user2.ps.authorized_keys')) ],

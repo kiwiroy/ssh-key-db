@@ -101,7 +101,7 @@ is $app->key_files->size, 2, 'two files';
 # add another, non-unique, but pass the nounique flag
 #
 $app = $t->app_instance(qw{
--public-key ./t/data/user2.ps.authorized_keys 
+-public-key ./t/data/user2.ps.authorized_keys
 -command /bin/true
 -username bazza.nologin
 -reason test-suite
