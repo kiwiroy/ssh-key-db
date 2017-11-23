@@ -20,6 +20,8 @@ if(!eval 'use Test::Synopsis; 1') {
   *Test::Synopsis::synopsis_ok = sub { SKIP: { skip "synopsis_ok(@_) (Test::Synopsis is required)", 2 } };
 }
 
+my @files;
+
 find(
   {
     wanted => sub { /\.pm$/ and push @files, $File::Find::name },
