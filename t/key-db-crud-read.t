@@ -1,7 +1,8 @@
 ## -*- mode: perl; -*-
-
+## no critic(Modules::RequireFilenameMatchesPackage)
 package
-    crudreadtest;
+    KeyDBCrudRead;
+
 use strict;
 use warnings;
 

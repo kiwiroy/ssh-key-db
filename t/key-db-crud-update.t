@@ -1,6 +1,6 @@
 ## -*- mode: perl; -*-
-
-package 
+## no critic(Modules::RequireFilenameMatchesPackage)
+package
     KeyDBCRUDUpdate;
 
 use strict;

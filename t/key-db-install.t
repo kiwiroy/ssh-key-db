@@ -1,7 +1,7 @@
 ## -*- mode: perl; -*-
-
-package 
-    installtest;
+## no critic(Modules::RequireFilenameMatchesPackage)
+package
+    KeyDBInstall;
 
 use strict;
 use warnings;
@@ -28,7 +28,7 @@ my $auth_key = $db->child('authorized_keys.install');
 $auth_key->spurt($input);
 
 #
-# update one 
+# install
 #
 $app = $t->app_instance(@opts, qw{--authorized-keys}, $auth_key->to_string);
 

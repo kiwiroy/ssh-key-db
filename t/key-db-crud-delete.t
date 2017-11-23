@@ -1,5 +1,5 @@
 ## -*- mode: perl; -*-
-
+## no critic(Modules::RequireFilenameMatchesPackage)
 use strict;
 use warnings;
 

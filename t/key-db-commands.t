@@ -1,6 +1,8 @@
 ## -*- mode: perl; -*-
-package 
-    dbcommandstest;
+## no critic(Modules::RequireFilenameMatchesPackage)
+package
+    KeyDBCommand;
+
 use strict;
 use warnings;
 
