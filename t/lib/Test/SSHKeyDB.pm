@@ -61,13 +61,13 @@ monkey_patch 'Test::Applify', run_instance_ok => sub {
     open STDERR, '>', \$stderr;
 
     local *CORE::GLOBAL::exit = sub (;$) { $exited = 1; };
-    eval { $instance->run() };
+    my $retval = eval { $instance->run() };
     # no warnings 'once' and https://stackoverflow.com/a/25376064
     *CORE::GLOBAL::exit = *CORE::exit;
 
     Test::More::diag "\$instance->run failed, check stderr" if 1 == $exited;
 
-    return ($exited, $stdout || $@, $@ || $stderr);
+    return ($exited, $stdout || $@, $@ || $stderr, $retval);
 };
 
 monkey_patch 'Test::Applify', run_ok => sub {
