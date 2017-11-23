@@ -116,7 +116,7 @@ sub command_update {
             $self->username($user) unless $self->username;
             my $moved = $_->move_to($_->dirname->child($self->_generate_filename));
             say "renamed: $_ to $moved" if "$_" ne "$moved";
-            [ $moved, SSH::PublicKey->new(val => $moved->slurp) ]
+            return [ $moved, SSH::PublicKey->new(val => $moved->slurp) ];
         })
         ->each(
         sub {
@@ -204,7 +204,7 @@ sub command_install {
     $keys->each(
         sub {
             $installed++;
-            $mem->add_chunk($_->render)
+            $mem->add_chunk($_->render);
         });
     $mem->move_to($self->authorized_keys);
 
@@ -238,7 +238,7 @@ sub _fetch_by_public_key {
 sub _fetch_by_user {
     my ($self, $user) = @_;
     return $self->key_files
-        ->grep(sub { $_->basename =~ qr/^$user\./ })
+        ->grep(sub { return $_->basename =~ qr/^$user\./; })
 }
 
 sub _filename_divide {
