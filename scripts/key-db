@@ -238,7 +238,7 @@ sub _fetch_by_public_key {
 sub _fetch_by_user {
     my ($self, $user) = @_;
     return $self->key_files
-        ->grep(sub { return $_->basename =~ qr/^$user\./; })
+        ->grep(sub { return $_->basename =~ qr/^$user\./; });
 }
 
 sub _filename_divide {
