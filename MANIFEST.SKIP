@@ -68,4 +68,11 @@
 ^local/
 ^MANIFEST\.SKIP
 ^README\.pod
-.*\.gz
+^.*\.gz
+
+^key-db$
+
+^bin/\.gitkeep$
+^\.travis\.yml$
+^\.ship\.conf$
+^\.gitattributes$

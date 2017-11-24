@@ -18,6 +18,8 @@ extends 'Mojo::Base';
 
 documentation __FILE__;
 
+version $SSH::PublicKey::VERSION;
+
 sub key_files { shift->key_dir->list()->grep(qr/\.authorized_keys$/); }
 
 option dir  => key_dir => 'where to find *.authorized_keys files', default => '.', isa => 'Mojo::File';
