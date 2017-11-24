@@ -1,4 +1,5 @@
-# You can install this project with curl -L http://cpanmin.us | perl - https://github.com/hrards/ssh-publickey/archive/master.tar.gz
+# You can install this project with
+# curl -L http://cpanmin.us | perl - https://github.com/hrards/ssh-publickey/archive/master.tar.gz
 requires "perl" => "5.10.0";
 requires "Applify" => "0.14";
 requires "Mojolicious" => "7.55";
