@@ -41,7 +41,7 @@ is $app->reason,     'test-suite-2', 'reason set';
 is $app->key_dir,    $db->to_string, 'key dir set';
 is_deeply $app->allowed, [qw{ps ls}], 'allowed set';
 
-($exited, $stdout, $stderr) = $t->run_instance_ok($app);
+($retval, $stdout, $stderr, $exited) = $t->run_instance_ok($app);
 
 is $exited, 0, 'successful run';
 
@@ -57,7 +57,7 @@ $app = $t->app_instance(@opts, qw{
 -username baz
 -reason test-suite-2});
 
-($exited, $stdout, $stderr, $retval) = $t->run_instance_ok($app);
+($retval, $stdout, $stderr, $exited) = $t->run_instance_ok($app);
 
 is $exited, 0, 'successful run';
 is $retval, 1, 'return value';
@@ -68,7 +68,6 @@ unlike $stderr, qr/^renamed:/, 'file was not renamed';
 # do not update another one - allowed but no command
 #
 
-
 my $data = Mojo::Home->new->detect->child(qw{t data});
 ## username and reason passed to match
 $app = $t->app_instance(qw{
@@ -78,12 +77,11 @@ $app = $t->app_instance(qw{
 -reason shutdown
 --key-dir}, $data->to_string);
 
-($exited, $stdout, $stderr, $retval) = $t->run_instance_ok($app);
+($retval, $stdout, $stderr, $exited) = $t->run_instance_ok($app);
 
 is $exited, 0, 'successful run';
 is $retval, 2, 'return value';
 like $stderr, qr/^no command to update/m, 'failed update message';
-
 
 #
 # check database is as expected

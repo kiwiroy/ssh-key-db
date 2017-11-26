@@ -32,7 +32,7 @@ $auth_key->spurt($input);
 #
 $app = $t->app_instance(@opts, qw{--authorized-keys}, $auth_key->to_string);
 
-($exited, $stdout, $stderr, $retval) = $t->run_instance_ok($app);
+($retval, $stdout, $stderr, $exited) = $t->run_instance_ok($app);
 
 is $exited, 0, 'successful run';
 is $retval, 0, 'successful retval';
@@ -45,7 +45,7 @@ is $auth_key->slurp, $output, 'installed correct keys';
 
 $app = $t->app_instance(@opts, qw{--authorized-keys}, $auth_key->to_string . '-does-not-exist');
 
-($exited, $stdout, $stderr, $retval) = $t->run_instance_ok($app);
+($retval, $stdout, $stderr, $exited) = $t->run_instance_ok($app);
 
 is $exited, 0, 'successful run';
 is $retval, 1, 'successful retval';

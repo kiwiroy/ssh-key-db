@@ -9,7 +9,7 @@ use Test::Applify;
 use lib './t/lib';
 use Test::SSHKeyDB 'create_db';
 
-my ($t, $app, $exited, $stdout, $stderr);
+my ($t, $app, $exited, $stdout, $stderr, $retval);
 
 $t = new_ok('Test::Applify', ['./scripts/key-db', 'delete']);
 
@@ -23,9 +23,10 @@ $app = $t->app_instance(@opt, qw{-user foo});
 
 is $app->key_files->size, 2, 'two files';
 
-($exited, $stdout, $stderr) = $t->run_instance_ok($app);
+($retval, $stdout, $stderr, $exited) = $t->run_instance_ok($app);
 
 is $exited, 0, 'ran ok';
+is $retval, 0, 'ran ok';
 like $stdout, qr/^deleting:/, 'message';
 is $stderr, '', 'no messages';
 
@@ -36,9 +37,10 @@ is $app->key_files->size, 1, 'one file';
 #
 $app = $t->app_instance(@opt, qw{-user bar});
 
-($exited, $stdout, $stderr) = $t->run_instance_ok($app);
+($retval, $stdout, $stderr, $exited) = $t->run_instance_ok($app);
 
 is $exited, 0, 'ran ok';
+is $retval, 0, 'ran ok';
 like $stdout, qr/^deleting:/, 'message';
 is $stderr, '', 'no messages';
 
@@ -59,9 +61,10 @@ $app = $t->app_instance(@opt, qw{-public-key ./t/data/user2.ps.authorized_keys})
 
 is $app->key_files->size, 2, 'two files';
 
-($exited, $stdout, $stderr) = $t->run_instance_ok($app);
+($retval, $stdout, $stderr, $exited) = $t->run_instance_ok($app);
 
 is $exited, 0, 'ran ok';
+is $retval, 0, 'ran ok';
 like $stdout, qr/^deleting:/, 'message';
 is $stderr, '', 'no messages';
 
@@ -81,9 +84,10 @@ $app = $t->app_instance(@opt, qw{-public-key ./t/data/user2.ps.authorized_keys -
 
 is $app->key_files->size, 2, 'two files';
 
-($exited, $stdout, $stderr) = $t->run_instance_ok($app);
+($retval, $stdout, $stderr, $exited) = $t->run_instance_ok($app);
 
 is $exited, 0, 'ran ok';
+is $retval, 0, 'ran ok';
 is +($stdout =~ s/^(deleting:)/$1/gm), 2, 'message';
 is $stderr, '', 'no messages';
 
@@ -104,9 +108,10 @@ $app = $t->app_instance(@opt, qw{-public-key ./t/data/user2.ps.authorized_keys -
 
 is $app->key_files->size, 2, 'two files';
 
-($exited, $stdout, $stderr) = $t->run_instance_ok($app);
+($retval, $stdout, $stderr, $exited) = $t->run_instance_ok($app);
 
 is $exited, 0, 'ran ok';
+is $retval, 0, 'ran ok';
 is +($stdout =~ s/^(deleting:)/$1/gm), 1, 'message';
 is $stderr, '', 'no messages';
 
