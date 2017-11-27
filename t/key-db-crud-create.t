@@ -17,6 +17,27 @@ my ($t, $app);
 
 $t = new_ok('Test::Applify', ['./scripts/key-db', 'add']);
 
+#
+# test filename generator
+#
+$app = $t->app_instance(qw{-username foo -reason this});
+is $app->_generate_filename, 'foo.this.authorized_keys', 'normal';
+
+$app = $t->app_instance(qw{-username foo -reason this.is});
+is $app->_generate_filename, 'foo.this_is.authorized_keys', 'dots';
+
+$app = $t->app_instance(qw{-username foo -reason}, 'some reason with spaces');
+is $app->_generate_filename, 'foo.some_reason_with_spaces.authorized_keys', 'spaces';
+
+$app = $t->app_instance(qw{-username fu.manchu -reason this});
+is $app->_generate_filename, 'fu_manchu.this.authorized_keys', 'username dots';
+
+$app = $t->app_instance('-user', 'fu manchu.', '-reason', 'unknown rea.son',);
+is $app->_generate_filename, 'fu_manchu_.unknown_rea_son.authorized_keys', 'dots and spaces everywhere';
+
+#
+# new empty database
+#
 my $db = create_empty_db(Mojo::File->new($0)->basename);
 
 #

@@ -37905,8 +37905,8 @@ sub _filename_divide {
 
 sub _generate_filename {
     my ($self) = @_;
-    (my $reason   = $self->reason)   =~ s/\./_/g;
-    (my $username = $self->username) =~ s/\./_/g;
+    (my $reason   = $self->reason)   =~ s/\s|\./_/g;
+    (my $username = $self->username) =~ s/\s|\./_/g;
     return sprintf '%s.%s.authorized_keys', $username, $reason;
 }
 
@@ -37917,7 +37917,6 @@ app {
 
     return 0;
 };
-
 
 =pod
 
@@ -37933,12 +37932,62 @@ key-db - a file based ssh public key database
 
 =head1 DESCRIPTION
 
+Manage a directory of public keys for installation into a L<authorized_keys|https://man.openbsd.org/ssh#FILES> file.
+
+The public keys are keys that require restriction of some kind. The general application is to limit to a command that
+can be run of a server.
+
 =head1 SYNOPSIS
+
+=for test_synopsis BEGIN { die "SKIP: skip this pod, it's horrible!\n"; }
+
+Examples:
+
+  key-db add -key-dir keys -public-key foo_id_rsa.pub -user foo -command /sbin/nologin -reason safety
+  key-db add -key-dir keys -public-key bar_id_rsa.pub -user bar -command /sbin/nologin -reason safety
+  key-db add -key-dir keys -public-key baz_id_rsa.pub -user baz -command /sbin/nologin -reason safety
+
+  key-db list -key-dir keys
+
+  key-db update -key-dir keys -user foo -command /sbin/only -allowed ps -reason trusted
+
+  key-db delete -key-dir keys -user baz
+
+  key-db install -key-dir keys -authorized-keys ~/.ssh/authorized_keys
+
+  key-db add --help
+
+=head1 COMMANDS
+
+This a commands based script where the desired operation is passed to the script as the first parameter at the
+command line.
+
+=head2 add
+
+Add a public key to the C<-key-dir> directory with the appropriate restrictions in place.
+
+=head2 list
+
+List the keys in the C<-key-dir> directory.
+
+=head2 update
+
+Update a current key with new information.
+
+=head2 install
+
+Install all the keys from the C<-key-dir> into the C<-authorized-keys> file.
 
 =head1 SEE ALSO
 
-This is nothing like
+=over 4
 
-* man sshd_config AuthorizedKeysCommand
+=item L<authorized_keys|https://man.openbsd.org/ssh#FILES>
+
+=item L<authorized_keys file format|https://man.openbsd.org/sshd.8#AUTHORIZED_KEYS_FILE_FORMAT>
+
+=item L<AuthorizedKeysCommand|https://man.openbsd.org/sshd_config#AuthorizedKeysCommand>
+
+=back
 
 =cut
