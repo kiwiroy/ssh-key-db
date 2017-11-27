@@ -37924,11 +37924,27 @@ app {
 
 key-db - a file based ssh public key database
 
-=for html <a href="https://travis-ci.org/kiwiroy/ssh-key-db"><img src="https://travis-ci.org/kiwiroy/ssh-key-db.svg?branch=master"></a>
+=begin html 
 
-=for html <a href='https://coveralls.io/github/kiwiroy/ssh-key-db?branch=master'><img src='https://coveralls.io/repos/github/kiwiroy/ssh-key-db/badge.svg?branch=master' alt='Coverage Status' /></a>
+<!-- Travis-CI.org -->
+<a href="https://travis-ci.org/kiwiroy/ssh-key-db">
+  <img src="https://travis-ci.org/kiwiroy/ssh-key-db.svg?branch=master">
+</a>
+<!-- Coveralls.io -->
+<!-- suffering https://groups.google.com/forum/#!topic/perl.qa/OzlK96Plqeg ? -->
+<a href='https://coveralls.io/github/kiwiroy/ssh-key-db?branch=master'>
+  <img src='https://coveralls.io/repos/github/kiwiroy/ssh-key-db/badge.svg?branch=master'
+       alt='Coverage Status' />
+</a>
+<!-- Kritika.io -->
+<a href="https://kritika.io/users/kiwiroy/repos/5759845703012386/heads/master/">
+  <img src="https://kritika.io/users/kiwiroy/repos/5759845703012386/heads/master/status.svg"
+       alt="Kritika Analysis Status" />
+</a>
 
-=for html <a href="https://kritika.io/users/kiwiroy/repos/5759845703012386/heads/master/"><img src="https://kritika.io/users/kiwiroy/repos/5759845703012386/heads/master/status.svg" alt="Kritika Analysis Status" /></a>
+=end html
+
+=for test_synopsis BEGIN { die "SKIP: skip this pod, it's horrible!\n"; }
 
 =head1 DESCRIPTION
 
@@ -37938,8 +37954,6 @@ The public keys are keys that require restriction of some kind. The general appl
 can be run of a server.
 
 =head1 SYNOPSIS
-
-=for test_synopsis BEGIN { die "SKIP: skip this pod, it's horrible!\n"; }
 
 Examples:
 

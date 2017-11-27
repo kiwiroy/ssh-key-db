@@ -289,6 +289,8 @@ key-db - a file based ssh public key database
 
 =end html
 
+=for test_synopsis BEGIN { die "SKIP: skip this pod, it's horrible!\n"; }
+
 =head1 DESCRIPTION
 
 Manage a directory of public keys for installation into a L<authorized_keys|https://man.openbsd.org/ssh#FILES> file.
@@ -297,8 +299,6 @@ The public keys are keys that require restriction of some kind. The general appl
 can be run of a server.
 
 =head1 SYNOPSIS
-
-=for test_synopsis BEGIN { die "SKIP: skip this pod, it's horrible!\n"; }
 
 Examples:
 
